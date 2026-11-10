@@ -17,6 +17,11 @@ source("~/Library/CloudStorage/Dropbox/r_developments/r_dashboards/netlify/1.2.p
 library(fishualize)
 
 source("~/Library/CloudStorage/Dropbox/r_developments/r_dashboards/netlify/1.2.persisten_dengue_transmission_2026/persistent_dengue_transmission_10_durango/mp_dengue_cases.R")
+mapview::mapviewOptions(basemaps = c("Esri.WorldGrayCanvas",
+                                     "Stadia.AlidadeSmoothDark",
+                                     "OpenStreetMap", 
+                                     "Esri.WorldImagery", 
+                                     "OpenTopoMap"))
 ```
 
 
@@ -170,6 +175,26 @@ z |>
 ```
 :::
 
+::: grid-card
+
+```{r distribucion_cd_constitucion,echo=FALSE}
+z |>
+    dplyr::filter(IDE_EDA_ANO <= 12 | IDE_EDA_ANO >= 65) |>
+    dplyr::mutate(onset = FEC_INI_SIGNOS_SINT) |>
+    dplyr::select(ANO, long, lat, onset) |>
+    dplyr::mutate(x = long,
+                  y = lat) |>
+    sf::st_as_sf(coords = c("x", "y"),
+                 crs = 4326) |>
+    mp_dengue_cases(yrs = 2026,
+                    locality = "Ciudad Constitución",
+                    cve_edo = "03")
+
+
+```
+:::
+
+
 
 
 </div><div class="columna">
@@ -228,6 +253,26 @@ z |>
 :::
 
 
+::: grid-card
+
+```{r heatmap_cd_constitucion,echo=FALSE}
+z |>
+    dplyr::filter(IDE_EDA_ANO <= 12 | IDE_EDA_ANO >= 65) |>
+    dplyr::mutate(onset = FEC_INI_SIGNOS_SINT) |>
+    dplyr::select(ANO, long, lat, onset) |>
+    dplyr::mutate(x = long,
+                  y = lat) |>
+    sf::st_as_sf(coords = c("x", "y"),
+                 crs = 4326) |>
+  mp_heatmap(yrs = 2026,
+           cve_edo = "03",
+           locality = "Ciudad Constitución")
+
+```
+:::
+
+
+
 </div><div class="columna">
 <div class="column-header"> Cadenas de Transmisión</div>
 
@@ -235,18 +280,14 @@ z |>
 ::: grid-card
 
 ```{r chains_la_paz,echo=FALSE}
-z |>
-    #dplyr::filter(IDE_EDA_ANO <= 12 | IDE_EDA_ANO >= 65) |>
-    dplyr::mutate(onset = FEC_INI_SIGNOS_SINT) |>
-    dplyr::select(ANO, long, lat, onset) |>
-    dplyr::mutate(x = long,
-                  y = lat) |>
-    sf::st_as_sf(coords = c("x", "y"),
-                 crs = 4326) |>
-    mp_transmission_chains(
-                           yrs = 2026,
-                           locality = "La Paz",
-                           cve_edo = "03")
+source("/Users/fdzul/Desktop/r_developer_2026/mp_heatmap_gl.R")
+
+denhotspots::transmission_chains_map(geocoded_dataset = z |>
+    dplyr::filter(IDE_EDA_ANO <= 12 | IDE_EDA_ANO >= 65),
+                                     cve_edo = "03",
+    locality = "La Paz",
+                                    dengue_cases = c("Confirmado"))
+
 
 ```
 :::
@@ -254,18 +295,11 @@ z |>
 ::: grid-card
 
 ```{r chains_san_lucas,echo=FALSE}
-z |>
-    #dplyr::filter(IDE_EDA_ANO <= 12 | IDE_EDA_ANO >= 65) |>
-    dplyr::mutate(onset = FEC_INI_SIGNOS_SINT) |>
-    dplyr::select(ANO, long, lat, onset) |>
-    dplyr::mutate(x = long,
-                  y = lat) |>
-    sf::st_as_sf(coords = c("x", "y"),
-                 crs = 4326) |>
-    mp_transmission_chains(
-                           yrs = 2026,
-                           locality = "Los Cabos San Lucas",
-                           cve_edo = "03")
+denhotspots::transmission_chains_map(geocoded_dataset = z |>
+    dplyr::filter(IDE_EDA_ANO <= 12 | IDE_EDA_ANO >= 65),
+                                     cve_edo = "03",
+                                     locality = "Los Cabos San Lucas",
+                                     dengue_cases = c("Confirmado"))
 
 ```
 :::
@@ -273,9 +307,15 @@ z |>
 ::: grid-card
 
 ```{r chains_jose,echo=FALSE}
-
+denhotspots::transmission_chains_map(geocoded_dataset = z |>
+    dplyr::filter(IDE_EDA_ANO <= 12 | IDE_EDA_ANO >= 65),
+                                     cve_edo = "03",
+                                     locality = "San Jose Los Cabos",
+                                     dengue_cases = c("Confirmado"))
 ```
 :::
+
+
 
 
 </div>
